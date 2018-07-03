@@ -15,6 +15,7 @@ $_['entry_login']        	= 'Spicepay Site ID:';
 $_['entry_spicepay_key']    	= 'Spicepay Callback Secret:';
 
 $_['entry_order_status'] 	= 'Order Status after pay:';
+$_['entry_currency'] 		= 'Set currency:';
 $_['entry_geo_zone']     	= 'Geo Zone:';
 $_['entry_status']      	= 'Status:';
 $_['entry_sort_order']   	= 'Sort Order:';

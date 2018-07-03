@@ -36,11 +36,11 @@ class ControllerExtensionPaymentSpicepay extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			if ($this->request->post['save_stay']){
+			// if ($this->request->post['save_stay']){
 
-			 	$this->response->redirect($this->url->link('extension/payment/spicepay', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
+			// 	$this->response->redirect($this->url->link('payment/spicepay', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
 
-			}
+			// }
 
 			$this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
 
@@ -90,7 +90,7 @@ class ControllerExtensionPaymentSpicepay extends Controller {
 
 		// URL
 
-		$data['copy_result_url'] 	= HTTP_CATALOG . 'index.php?route=extension/payment/spicepay/callback';
+		$data['copy_result_url'] 	= HTTP_CATALOG . 'index.php?route=payment/spicepay/callback';
 
 		$data['copy_success_url']	= HTTP_CATALOG . 'index.php?route=checkout/success';
 
@@ -103,6 +103,8 @@ class ControllerExtensionPaymentSpicepay extends Controller {
 
 
 		$data['entry_order_status'] = $this->language->get('entry_order_status');
+
+		$data['entry_currency'] = $this->language->get('entry_currency');
 
 		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
 
@@ -299,6 +301,17 @@ class ControllerExtensionPaymentSpicepay extends Controller {
 		} else {
 
 			$data['payment_spicepay_status'] = $this->config->get('payment_spicepay_status');
+
+		}
+
+
+		if (isset($this->request->post['payment_spicepay_currency'])) {
+
+			$data['payment_spicepay_currency'] = $this->request->post['payment_spicepay_currency'];
+
+		} else {
+
+			$data['payment_spicepay_currency'] = $this->config->get('payment_spicepay_currency');
 
 		}
 

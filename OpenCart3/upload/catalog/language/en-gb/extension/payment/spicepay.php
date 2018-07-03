@@ -1,7 +1,4 @@
-<?php
-
-// Text
-
-$_['text_title'] = 'Cryptocurrency';
-
+<?php
+// Text
+$_['text_title'] = 'SpicePay';
 ?>

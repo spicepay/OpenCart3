@@ -32,7 +32,7 @@ class ControllerExtensionPaymentSpicepay extends Controller {
         $data['inv_id'] = $this->session->data['order_id'];
      
 
-        $data['action']="https://www.spicepay.com/p.php";
+        $data['action']="https://www.spicepay.com/pay.php";
 
 
 
@@ -64,80 +64,118 @@ return $this->load->view('extension/payment/spicepay', $data);
 
 
 
-        if (isset($_POST['paymentId']) && isset($_POST['orderId']) && isset($_POST['hash']) 
-        && isset($_POST['paymentCryptoAmount']) && isset($_POST['paymentAmountUSD']) 
-        && isset($_POST['receivedCryptoAmount']) && isset($_POST['receivedAmountUSD'])) {
-    
-    
-    
-            $this->load->model('checkout/order');
-            $order_info = $this->model_checkout_order->getOrder($_POST['orderId']);
-    
-            $paymentId = addslashes(filter_input(INPUT_POST, 'paymentId', FILTER_SANITIZE_STRING));
-            $orderId = addslashes(filter_input(INPUT_POST, 'orderId', FILTER_SANITIZE_STRING));
-            $hash = addslashes(filter_input(INPUT_POST, 'hash', FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH));    
-            $clientId = addslashes(filter_input(INPUT_POST, 'clientId', FILTER_SANITIZE_STRING));
-            $paymentAmountBTC = addslashes(filter_input(INPUT_POST, 'paymentAmountBTC', FILTER_SANITIZE_NUMBER_INT));
-            $paymentAmountUSD = addslashes(filter_input(INPUT_POST, 'paymentAmountUSD', FILTER_SANITIZE_STRING));
-            $receivedAmountBTC = addslashes(filter_input(INPUT_POST, 'receivedAmountBTC', FILTER_SANITIZE_NUMBER_INT));
-            $receivedAmountUSD = addslashes(filter_input(INPUT_POST, 'receivedAmountUSD', FILTER_SANITIZE_STRING));
-            $status = addslashes(filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING));
+if (isset($_POST['paymentId']) || isset($_GET['paymentId'])) {
+
+
+
+	if (isset($_POST['paymentId']) && isset($_POST['orderId']) && isset($_POST['hash']) 
+
+&& isset($_POST['paymentAmountBTC']) && isset($_POST['paymentAmountUSD']) 
+
+&& isset($_POST['receivedAmountBTC']) && isset($_POST['receivedAmountUSD'])) {
+
+        $this->load->model('checkout/order');
+
+        $order_info = $this->model_checkout_order->getOrder($_POST['orderId']);
+
+        $paymentId = $_POST['paymentId'];
+
+    $orderId = $_POST['orderId'];
+
+    $hash = $_POST['hash'];    
+
+    $clientId = $_POST['clientId'];
+
+    $paymentAmountBTC = $_POST['paymentAmountBTC'];
+
+    $paymentAmountUSD = $_POST['paymentAmountUSD'];
+
+    $receivedAmountBTC = $_POST['receivedAmountBTC'];
+
+    $receivedAmountUSD = $_POST['receivedAmountUSD'];
+
+    $status = $_POST['status'];
+
+    $secretCode = $this->config->get('spicepay_key');
+
+
+} elseif (isset($_GET['paymentId']) && isset($_GET['orderId']) && isset($_GET['hash']) 
+
+&& isset($_GET['paymentAmountBTC']) && isset($_GET['paymentAmountUSD']) 
+
+&& isset($_GET['receivedAmountBTC']) && isset($_GET['receivedAmountUSD'])) {
+
+        $this->load->model('checkout/order');
+
+        $order_info = $this->model_checkout_order->getOrder($_GET['orderId']);
+
+        $paymentId = $_GET['paymentId'];
+
+    $orderId = $_GET['orderId'];
+
+    $hash = $_GET['hash'];    
+
+    $clientId = $_GET['clientId'];
+
+    $paymentAmountBTC = $_GET['paymentAmountBTC'];
+
+    $paymentAmountUSD = $_GET['paymentAmountUSD'];
+
+    $receivedAmountBTC = $_GET['receivedAmountBTC'];
+
+    $receivedAmountUSD = $_GET['receivedAmountUSD'];
+
+    $status = $_GET['status'];
+
+    $secretCode = $this->config->get('spicepay_key');
+
+}
+        
+
+        if (strcmp($_SERVER['REMOTE_ADDR'], '217.23.11.119') == 0 || strcmp($_SERVER['REMOTE_ADDR'], '51.254.46.119') == 0) {
+
             
-            if(isset($_POST['paymentCryptoAmount']) && isset($_POST['receivedCryptoAmount'])) {
-                $paymentCryptoAmount = addslashes(filter_input(INPUT_POST, 'paymentCryptoAmount', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
-                $receivedCryptoAmount = addslashes(filter_input(INPUT_POST, 'receivedCryptoAmount', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
-            }
-            else {
-                $paymentCryptoAmount = addslashes(filter_input(INPUT_POST, 'paymentAmountBTC', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
-                $receivedCryptoAmount = addslashes(filter_input(INPUT_POST, 'receivedAmountBTC', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION));
-            }
-    
-            $secretCode = $this->config->get('payment_spicepay_key');
-    
-            $hashString = $secretCode . $paymentId . $orderId . $clientId . $paymentCryptoAmount . $paymentAmountUSD . $receivedCryptoAmount . $receivedAmountUSD . $status;
-             
-             die(md5($hashString).' - '. $hash.' - '.$secretCode);   
-    
-            if (0 == strcmp(md5($hashString), $hash)) {
-    
-               $sum = $order_info['total']; 
-        
-              if ((float)$sum != $receivedAmountUSD) {
-        
-                        echo  'не совпадает сумма заказа';
-        
-              } else {
-        
-        
-                  $this->model_checkout_order->addOrderHistory($orderId, 5, 'spicepay');
-        
-                  echo 'OK';
-        
-              
-        
-              }
-    
-                
-    
-            }else {
-    
-                echo 'fail';
-        
-            }
-    
+
+        if (0 == strcmp(md5($secretCode . $paymentId . $orderId . $clientId . $paymentAmountBTC . $paymentAmountUSD . $receivedAmountBTC . $receivedAmountUSD . $status), $hash)) {
+
             
-    
+
+        
+
+       $sum = $order_info['total']; 
+
+      if ((float)$sum != $receivedAmountUSD) {
+
+                echo  'не совпадает сумма заказа';
+
+      } else {
+
+
+          $this->model_checkout_order->addOrderHistory($orderId, 5, 'spicepay');
+
+          echo 'OK';
+
+      
+
+      }
+
             
-    
-            
-    
-        } else {
-    
-            echo 'fail';
-    
-         
-    
+
         }
+
+        }
+
+        
+
+        
+
+    } else {
+
+        echo 'fail';
+
+     
+
+    }
 
 
 
