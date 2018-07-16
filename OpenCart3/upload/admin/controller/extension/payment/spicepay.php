@@ -1,5 +1,9 @@
 <?php
 
+// Module: SpicePay - OpenCart 3
+// Version: 1.0.1
+
+
 class ControllerExtensionPaymentSpicepay extends Controller {
 
 
